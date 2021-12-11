@@ -14,7 +14,11 @@ public class FibonacciHeap
     */
     public boolean isEmpty()
     {
-    	return false; // should be replaced by student code
+
+        // hi
+        // sup
+        //shlomi
+    	return true; // should be replaced by student code
     }
 		
    /**
