@@ -178,9 +178,23 @@ public class FibonacciHeap
     public static class HeapNode{
 
     	public int key;
+        public String info;
+        public int rank;
+        public boolean mark = false;
+        public HeapNode child;
+        public HeapNode prev;
+        public HeapNode next;
+        public HeapNode parent;
 
-    	public HeapNode(int key) {
+    	public HeapNode(int key, String info, int rank, boolean mark, HeapNode child,
+                        HeapNode prev, HeapNode next, HeapNode parent) {
     		this.key = key;
+            this.info = info;
+            this.rank = rank;
+            this.child = child;
+            this.prev = prev;
+            this.next = next;
+            this.parent = parent;
     	}
 
     	public int getKey() {
