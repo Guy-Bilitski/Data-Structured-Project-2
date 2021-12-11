@@ -5,6 +5,7 @@
  */
 public class FibonacciHeap
 {
+    private HeapNode min = null;
 
    /**
     * public boolean isEmpty()
@@ -177,20 +178,21 @@ public class FibonacciHeap
     */
     public static class HeapNode{
 
-    	public int key;
-        public String info;
-        public int rank;
-        public boolean mark = false;
-        public HeapNode child;
-        public HeapNode prev;
-        public HeapNode next;
-        public HeapNode parent;
+        private int key;
+        private String info;
+        private int rank;
+        private boolean mark;
+        private HeapNode child;
+        private HeapNode prev;
+        private HeapNode next;
+        private HeapNode parent;
 
-    	public HeapNode(int key, String info, int rank, boolean mark, HeapNode child,
+    	public HeapNode(int key, String info, int rank, HeapNode child,
                         HeapNode prev, HeapNode next, HeapNode parent) {
     		this.key = key;
             this.info = info;
             this.rank = rank;
+            this.mark = false;
             this.child = child;
             this.prev = prev;
             this.next = next;
