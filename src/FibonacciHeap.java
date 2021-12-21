@@ -184,6 +184,7 @@ public class FibonacciHeap
                 else {
                     basket[node.rank].prev.next = basket[node.rank].next;
                     concatenateRoots(basket[node.rank], node);
+                    node = node.next;
                 }
                 basket[rankToDelete] = null;
             }
