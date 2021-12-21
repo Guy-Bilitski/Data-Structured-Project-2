@@ -30,6 +30,18 @@ public class FibonacciHeap
     {
     	return this.min == null;
     }
+
+    private void goLeft(HeapNode node) {
+        while (node.prev != null) {
+            node = node.prev;
+        }
+    }
+
+    private void goRight(HeapNode node) {
+        while (node.next != null) {
+            node = node.next;
+        }
+    }
 		
    /**
     * public HeapNode insert(int key)
@@ -42,10 +54,7 @@ public class FibonacciHeap
     public HeapNode insert(int key)
     {
     	HeapNode leftNode = this.min;
-
-        while (leftNode.prev != null) { // find the most left heapnode
-            leftNode = leftNode.prev;
-        }
+        goLeft(leftNode);
 
         HeapNode newNode = new HeapNode(key, leftNode); // create the new heapnode
         leftNode.prev = newNode; // set recent most left heapnode prev as the new heapnode
@@ -84,10 +93,9 @@ public class FibonacciHeap
 
         HeapNode newMin = node;
         HeapNode curr = node;
-        while (curr.prev != null){  // stop at the most left node
-            curr = curr.prev;
-        }
-        while (curr != null){  // stop at the most right node
+        goLeft(curr);
+
+        while (curr != null) {  // stop at the most right node
             if (curr.key < newMin.key){
                 newMin = curr;    // update the min.
             }
@@ -109,7 +117,44 @@ public class FibonacciHeap
         } else {
             return this.min;
         }
-    } 
+    }
+
+    private void concatenateHeaps(FibonacciHeap heap2) {
+        HeapNode rightNodeHeap1 = this.min;
+        HeapNode leftNodeHeap2 = heap2.min;
+        if (this.min.key > heap2.min.key) {
+            this.min = heap2.min;
+        }
+
+        goRight(rightNodeHeap1);
+        goLeft(leftNodeHeap2);
+
+        rightNodeHeap1.next = leftNodeHeap2;
+        leftNodeHeap2.prev = rightNodeHeap1;
+
+        this.size += heap2.size;
+
+    }
+
+    // @pre key of root1 is the smallest
+    // @pre rank of both roots is equal
+    private void concatenateRoots(HeapNode root1, HeapNode root2) {
+        if (root2.child == null) {
+            root2.child = root1;
+            root1.parent = root2;
+        }
+
+        else {
+            root2.child.prev = root1;
+            root1.next = root2.child;
+            root1.parent = root2;
+            root1.prev = null;
+            root2.child = root1;
+        }
+
+        root2.rank ++;
+        root2.size += root1.size;
+    }
     
    /**
     * public void meld (FibonacciHeap heap2)
@@ -118,6 +163,31 @@ public class FibonacciHeap
     *
     */
     public void meld (FibonacciHeap heap2){
+        concatenateHeaps(heap2);
+        HeapNode node = this.min;
+        goLeft(node);
+
+        HeapNode[] basket = new HeapNode[this.size];
+        while (node.next != null) {
+            if (basket[node.rank] == null) {
+                basket[node.rank] = node;
+                node = node.next;
+            }
+            else {
+                int rankToDelete = node.rank;
+                if (node.key < basket[node.rank].key) {
+                    HeapNode changeNode = node;
+                    node = node.next;
+                    changeNode.prev.next = changeNode.next;
+                    concatenateRoots(changeNode, basket[node.rank]);
+                }
+                else {
+                    basket[node.rank].prev.next = basket[node.rank].next;
+                    concatenateRoots(basket[node.rank], node);
+                }
+                basket[rankToDelete] = null;
+            }
+        }
     }
 
    /**
@@ -243,13 +313,14 @@ public class FibonacciHeap
             this.rank = 0;
             this.mark = false;
             this.child = null;
-            this.prev = this;
-            this.next = this;
+            this.prev = null;
+            this.next = null;
             this.parent = null;
     	}
 
     	public int getKey() {
     		return this.key;
     	}
+
     }
 }
