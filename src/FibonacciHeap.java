@@ -1,3 +1,5 @@
+import javax.print.attribute.HashPrintJobAttributeSet;
+
 /**
  * FibonacciHeap
  *
@@ -61,10 +63,37 @@ public class FibonacciHeap
     * Deletes the node containing the minimum key.
     *
     */
-    public void deleteMin()
-    {
-     	return; // should be replaced by student code
-     	
+    public void deleteMin() {
+
+        if (this.min.child != null){  //remove the min node and update the pointers (prev, next, child)
+            HeapNode childNode = this.min.child;
+            childNode.prev.next = this.min.next; // update the right child node, then update the left child node
+            childNode.prev = this.min.prev;
+            this.min.prev.next = childNode;
+        }
+        else {
+            this.min.prev.next = this.min.next;   // if no have a child - just remove the min node.
+            this.min.next.prev = this.min.prev;
+        }
+        this.min = findNewMin(this.min.next);
+        this.min.prev = this.min.next = this.min.child = null;   // disconnect this min's pointers to the tree.
+        }
+
+
+    private HeapNode findNewMin(HeapNode node) {  // find minimum in circular doubly linked list
+
+        HeapNode newMin = node;
+        HeapNode curr = node;
+        while (curr.prev != null){  // stop at the most left node
+            curr = curr.prev;
+        }
+        while (curr != null){  // stop at the most right node
+            if (curr.key < newMin.key){
+                newMin = curr;    // update the min.
+            }
+            curr = curr.next;
+        }
+        return newMin;
     }
 
    /**
@@ -75,7 +104,11 @@ public class FibonacciHeap
     */
     public HeapNode findMin()
     {
-    	return new HeapNode(678);// should be replaced by student code
+    	if (this.isEmpty()) {
+            return null;
+        } else {
+            return this.min;
+        }
     } 
     
    /**
@@ -84,9 +117,7 @@ public class FibonacciHeap
     * Melds heap2 with the current heap.
     *
     */
-    public void meld (FibonacciHeap heap2)
-    {
-    	  return; // should be replaced by student code   		
+    public void meld (FibonacciHeap heap2){
     }
 
    /**
@@ -212,8 +243,8 @@ public class FibonacciHeap
             this.rank = 0;
             this.mark = false;
             this.child = null;
-            this.prev = null;
-            this.next = next;
+            this.prev = this;
+            this.next = this;
             this.parent = null;
     	}
 
