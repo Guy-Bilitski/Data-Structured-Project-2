@@ -184,6 +184,7 @@ public class FibonacciHeap
     *  
     */
     public static class HeapNode{
+<<<<<<< HEAD
     	public int key;
         public int size;
         public String info;
@@ -195,6 +196,19 @@ public class FibonacciHeap
         public HeapNode parent;
 
     	public HeapNode(int key, int size, String info, int rank, HeapNode child,
+=======
+
+        private int key;
+        private String info;
+        private int rank;
+        private boolean mark;
+        private HeapNode child;
+        private HeapNode prev;
+        private HeapNode next;
+        private HeapNode parent;
+
+    	public HeapNode(int key, String info, int rank, HeapNode child,
+>>>>>>> 90b566c2a89ac876f59eb0bdf8fd875f02018f5d
                         HeapNode prev, HeapNode next, HeapNode parent) {
     		this.key = key;
             this.size = size;
