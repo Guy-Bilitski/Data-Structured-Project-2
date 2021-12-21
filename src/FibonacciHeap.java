@@ -38,8 +38,21 @@ public class FibonacciHeap
     * Returns the newly created node.
     */
     public HeapNode insert(int key)
-    {    
-    	return new HeapNode(key); // should be replaced by student code
+    {
+    	HeapNode leftNode = this.min;
+
+        while (leftNode.prev != null) { // find the most left heapnode
+            leftNode = leftNode.prev;
+        }
+
+        HeapNode newNode = new HeapNode(key, leftNode); // create the new heapnode
+        leftNode.prev = newNode; // set recent most left heapnode prev as the new heapnode
+        if (this.min.key > newNode.key) { // check if min should change
+            this.min = newNode;
+        }
+
+        this.size ++;
+        return newNode;
     }
 
    /**
@@ -184,10 +197,8 @@ public class FibonacciHeap
     *  
     */
     public static class HeapNode{
-<<<<<<< HEAD
     	public int key;
         public int size;
-        public String info;
         public int rank;
         public boolean mark;
         public HeapNode child;
@@ -195,30 +206,15 @@ public class FibonacciHeap
         public HeapNode next;
         public HeapNode parent;
 
-    	public HeapNode(int key, int size, String info, int rank, HeapNode child,
-=======
-
-        private int key;
-        private String info;
-        private int rank;
-        private boolean mark;
-        private HeapNode child;
-        private HeapNode prev;
-        private HeapNode next;
-        private HeapNode parent;
-
-    	public HeapNode(int key, String info, int rank, HeapNode child,
->>>>>>> 90b566c2a89ac876f59eb0bdf8fd875f02018f5d
-                        HeapNode prev, HeapNode next, HeapNode parent) {
+    	public HeapNode(int key, HeapNode next) {
     		this.key = key;
-            this.size = size;
-            this.info = info;
-            this.rank = rank;
+            this.size = 1;
+            this.rank = 0;
             this.mark = false;
-            this.child = child;
-            this.prev = prev;
+            this.child = null;
+            this.prev = null;
             this.next = next;
-            this.parent = parent;
+            this.parent = null;
     	}
 
     	public int getKey() {
