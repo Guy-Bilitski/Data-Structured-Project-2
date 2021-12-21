@@ -9,14 +9,17 @@ public class FibonacciHeap
 {
     private HeapNode min;
     private int size;
+    private HeapNode leftRoot;
 
-    public FibonacciHeap(HeapNode min) {
-        this.min = min;
-        this.size = min.size;
+    public FibonacciHeap(HeapNode node) {
+        this.min = node;
+        this.size = node.size;
+        this.leftRoot = node;
     }
 
     public FibonacciHeap() {
         this.min = null;
+        this.leftRoot = null;
         this.size = 0;
     }
 
@@ -31,17 +34,6 @@ public class FibonacciHeap
     	return this.min == null;
     }
 
-    private void goLeft(HeapNode node) {
-        while (node.prev != null) {
-            node = node.prev;
-        }
-    }
-
-    private void goRight(HeapNode node) {
-        while (node.next != null) {
-            node = node.next;
-        }
-    }
 		
    /**
     * public HeapNode insert(int key)
@@ -53,11 +45,17 @@ public class FibonacciHeap
     */
     public HeapNode insert(int key)
     {
-    	HeapNode leftNode = this.min;
-        goLeft(leftNode);
+        if (this.min == null) {
+            this.min = new HeapNode(key);
+            this.leftRoot = this.min;
+        }
 
-        HeapNode newNode = new HeapNode(key, leftNode); // create the new heapnode
+        HeapNode leftNode = this.leftRoot;
+        HeapNode newNode = new HeapNode(key); // create the new heapnode
+        newNode.next = leftNode;
         leftNode.prev = newNode; // set recent most left heapnode prev as the new heapnode
+        this.leftRoot = newNode; // set left root as the new node
+
         if (this.min.key > newNode.key) { // check if min should change
             this.min = newNode;
         }
@@ -74,7 +72,16 @@ public class FibonacciHeap
     */
     public void deleteMin() {
 
-        if (this.min.child != null){  //remove the min node and update the pointers (prev, next, child)
+        if (this.min == this.leftRoot) {
+            if (this.min.child != null) {
+                this.leftRoot = this.min.child;
+            }
+            else {
+                this.leftRoot = this.min.next;
+            }
+        }
+
+        if (this.min.child != null){  // remove the min node and update the pointers (prev, next, child)
             HeapNode childNode = this.min.child;
             childNode.prev.next = this.min.next; // update the right child node, then update the left child node
             childNode.prev = this.min.prev;
@@ -84,18 +91,17 @@ public class FibonacciHeap
             this.min.prev.next = this.min.next;   // if no have a child - just remove the min node.
             this.min.next.prev = this.min.prev;
         }
-        this.min = findNewMin(this.min.next);
+        this.min = findNewMin();
         this.min.prev = this.min.next = this.min.child = null;   // disconnect this min's pointers to the tree.
-        }
+
+    }
 
 
-    private HeapNode findNewMin(HeapNode node) {  // find minimum in circular doubly linked list
+    private HeapNode findNewMin() {  // find minimum in circular doubly linked list
+        HeapNode newMin = this.leftRoot;
+        HeapNode curr = this.leftRoot.next;
 
-        HeapNode newMin = node;
-        HeapNode curr = node;
-        goLeft(curr);
-
-        while (curr != null) {  // stop at the most right node
+        while (curr != this.leftRoot) {  // stop at the most right node
             if (curr.key < newMin.key){
                 newMin = curr;    // update the min.
             }
@@ -120,20 +126,22 @@ public class FibonacciHeap
     }
 
     private void concatenateHeaps(FibonacciHeap heap2) {
-        HeapNode rightNodeHeap1 = this.min;
-        HeapNode leftNodeHeap2 = heap2.min;
         if (this.min.key > heap2.min.key) {
             this.min = heap2.min;
         }
 
-        goRight(rightNodeHeap1);
-        goLeft(leftNodeHeap2);
+        HeapNode rightNodeHeap1 = this.leftRoot.prev;
+        HeapNode leftNodeHeap1 = this.leftRoot;
+        HeapNode rightNodeHeap2 = heap2.leftRoot.prev;
+        HeapNode leftNodeHeap2 = heap2.leftRoot.prev;
 
         rightNodeHeap1.next = leftNodeHeap2;
         leftNodeHeap2.prev = rightNodeHeap1;
 
-        this.size += heap2.size;
+        leftNodeHeap1.prev = rightNodeHeap2;
+        rightNodeHeap2.next = leftNodeHeap1;
 
+        this.size += heap2.size;
     }
 
     // @pre key of root1 is the smallest
@@ -142,13 +150,15 @@ public class FibonacciHeap
         if (root2.child == null) {
             root2.child = root1;
             root1.parent = root2;
+            root1.next = root1;
+            root1.prev = root1;
         }
 
         else {
-            root2.child.prev = root1;
             root1.next = root2.child;
+            root1.prev = root2.child.prev;
+            root2.child.prev = root1;
             root1.parent = root2;
-            root1.prev = null;
             root2.child = root1;
         }
 
@@ -164,8 +174,7 @@ public class FibonacciHeap
     */
     public void meld (FibonacciHeap heap2){
         concatenateHeaps(heap2);
-        HeapNode node = this.min;
-        goLeft(node);
+        HeapNode node = this.leftRoot;
 
         HeapNode[] basket = new HeapNode[this.size];
         while (node.next != null) {
@@ -308,20 +317,56 @@ public class FibonacciHeap
         public HeapNode next;
         public HeapNode parent;
 
-    	public HeapNode(int key, HeapNode next) {
+    	public HeapNode(int key) {
     		this.key = key;
             this.size = 1;
             this.rank = 0;
             this.mark = false;
             this.child = null;
-            this.prev = null;
-            this.next = null;
+            this.prev = this;
+            this.next = this;
             this.parent = null;
     	}
 
     	public int getKey() {
     		return this.key;
     	}
+        public HeapNode getChild() {return this.child;}
+       public HeapNode getNext() {return this.next;}
 
+    }
+
+    public static void printNode(HeapNode node) {
+        System.out.println("(");
+        if (node == null) {
+            System.out.println(")");
+            return;
+        }
+        else {
+            HeapNode t = node;
+            do {
+                System.out.println(t.getKey());
+                HeapNode child = t.getChild();
+                printNode(child);
+                System.out.println("->");
+                t = t.getNext();
+            } while (t.getKey() != node.getKey());
+            System.out.println(")");
+        }
+    }
+
+    public void printHeap() {
+        printNode(this.leftRoot);
+    }
+
+
+    public static void main(String[] args) {
+        FibonacciHeap h = new FibonacciHeap();
+        h.insert(5);
+        h.insert(10);
+        h.insert(4);
+        h.insert(2);
+        h.deleteMin();
+        System.out.println(h.min.key);
     }
 }
