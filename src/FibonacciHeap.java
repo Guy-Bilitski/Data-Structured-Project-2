@@ -5,6 +5,18 @@
  */
 public class FibonacciHeap
 {
+    private HeapNode min;
+    private int size;
+
+    public FibonacciHeap(HeapNode min) {
+        this.min = min;
+        this.size = min.size;
+    }
+
+    public FibonacciHeap() {
+        this.min = null;
+        this.size = 0;
+    }
 
    /**
     * public boolean isEmpty()
@@ -14,11 +26,7 @@ public class FibonacciHeap
     */
     public boolean isEmpty()
     {
-
-        // hi
-        // sup
-        //shlomi
-    	return true; // should be replaced by student code
+    	return this.min == null;
     }
 		
    /**
@@ -176,21 +184,23 @@ public class FibonacciHeap
     *  
     */
     public static class HeapNode{
-
     	public int key;
+        public int size;
         public String info;
         public int rank;
-        public boolean mark = false;
+        public boolean mark;
         public HeapNode child;
         public HeapNode prev;
         public HeapNode next;
         public HeapNode parent;
 
-    	public HeapNode(int key, String info, int rank, boolean mark, HeapNode child,
+    	public HeapNode(int key, int size, String info, int rank, HeapNode child,
                         HeapNode prev, HeapNode next, HeapNode parent) {
     		this.key = key;
+            this.size = size;
             this.info = info;
             this.rank = rank;
+            this.mark = false;
             this.child = child;
             this.prev = prev;
             this.next = next;
