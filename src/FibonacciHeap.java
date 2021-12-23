@@ -109,14 +109,17 @@ public class FibonacciHeap
 
     private HeapNode findNewMin() {  // find minimum in circular doubly linked list
         HeapNode newMin = this.leftRoot;
-        HeapNode curr = this.leftRoot.next;
+        HeapNode curr = this.leftRoot;
 
-        while (curr != this.leftRoot) {  // stop at the most right node
-            curr = curr.next;
+        do {
             if (curr.key < newMin.key){
                 newMin = curr;    // update the min.
             }
+            curr = curr.next;
         }
+        while(curr != this.leftRoot);
+
+
         return newMin;
     }
 
@@ -143,7 +146,7 @@ public class FibonacciHeap
         HeapNode rightNodeHeap1 = this.leftRoot.prev;
         HeapNode leftNodeHeap1 = this.leftRoot;
         HeapNode rightNodeHeap2 = heap2.leftRoot.prev;
-        HeapNode leftNodeHeap2 = heap2.leftRoot.prev;
+        HeapNode leftNodeHeap2 = heap2.leftRoot;
 
         rightNodeHeap1.next = leftNodeHeap2;
         leftNodeHeap2.prev = rightNodeHeap1;
@@ -189,7 +192,7 @@ public class FibonacciHeap
 
         HeapNode[] basket = new HeapNode[this.size];
 
-        while (node.next != stable) {
+        do {
             if (basket[node.rank] == null) {
                 basket[node.rank] = node;
                 node = node.next;
@@ -218,6 +221,7 @@ public class FibonacciHeap
                 basket[rankToDelete] = null;
             }
         }
+        while(node != this.leftRoot);
     }
 
    /**
@@ -228,7 +232,7 @@ public class FibonacciHeap
     */
     public int size()
     {
-    	return -123; // should be replaced by student code
+    	return this.size;
     }
     	
     /**
@@ -240,8 +244,15 @@ public class FibonacciHeap
     */
     public int[] countersRep()
     {
-    	int[] arr = new int[100];
-        return arr; //	 to be replaced by student code
+        int reqSize = (int) Math.log(this.size) * 2; // upper bound for biggest tree rank (real one using the golden ratio)
+        int[] arr = new int[reqSize];
+        HeapNode node = this.leftRoot;
+        do {
+            arr[node.rank] ++;
+            node = node.next;
+        }
+        while (node != this.leftRoot);
+        return arr;
     }
 	
    /**
@@ -387,13 +398,18 @@ public class FibonacciHeap
         h.insert(10);
         h.insert(4);
         h.insert(2);
+        h2.insert(15);
         h2.insert(-17);
         h.meld(h2);
-        h.deleteMin();
-        h.deleteMin();
-        System.out.println(h.min.key);
-        System.out.println(h.size);
-        System.out.println(h.leftRoot.key);
-        System.out.println(h.leftRoot.child.key);
+//        h.deleteMin();
+//        h.deleteMin();
+//        System.out.println(h.min.key);
+//        System.out.println(h.size);
+//        System.out.println(h.leftRoot.key);
+//        System.out.println(h.leftRoot.child);
+
+        for (int val : h.countersRep()) {
+            System.out.println(val);
+        }
     }
 }
