@@ -95,8 +95,8 @@ public class FibonacciHeap {
                 childNode.prev = this.min.prev;
                 childNode.parent = null;
                 this.min.prev.next = childNode;
-            } else {
                 this.numOfTrees += this.min.rank; //The number of trees increases by the number of children of min.
+            } else {
                 this.min.prev.next = this.min.next;   // if dont have a child - just remove the min node.
                 this.min.next.prev = this.min.prev;
             }
@@ -355,8 +355,11 @@ public class FibonacciHeap {
     private void cut(HeapNode x, HeapNode y){   // x becomes a root
         // Cut x:
         x.parent = null;
+        if (x.mark) {
+            this.numOfMarks --;
+        }
         x.mark = false;              // root never marked
-        this.numOfMarks --;
+        this.numOfTrees ++;
 
         // update y's pointers and fields:
         y.rank --;
@@ -457,7 +460,23 @@ public class FibonacciHeap {
         h.insert(2);
         h2.insert(15);
         h2.insert(-17);
+        System.out.println("num of tree in h1 before meld: " + h.numOfTrees);
         h.meld(h2);
+        System.out.println("num of tree in h1 after meld: " + h.numOfTrees);
+        System.out.println("num of marks: " + h.numOfMarks); // should be 0
+        h.delete(h.leftRoot.next.next);
+        System.out.println("num of marks after delete: " + h.numOfMarks);
+        h.decreaseKey(h.leftRoot.child, 10);
+        System.out.println("min key is: " + h.min.key);
+        System.out.println("leftroot key is " + h.leftRoot.key);
+        System.out.println("num of tree: " + h.numOfTrees);
+        System.out.println("num of marks: " + h.numOfMarks);
+        System.out.println("potential is " +  h.potential());
+        System.out.println("h size is: " + h.size());
+        System.out.println(h.leftRoot.next.rank);
+    }
+}
+
 //        h.deleteMin();
 //        h.deleteMin();
 //        System.out.println(h.min.key);
@@ -465,9 +484,9 @@ public class FibonacciHeap {
 //        System.out.println(h.leftRoot.key);
 //        System.out.println(h.leftRoot.child);
 
-        for (int val : h.countersRep()) {
-            System.out.println(val);
-        }
-    }
+//        for (int val : h.countersRep()) {
+//            System.out.println(val);
+//        }
+//    }
 
-}
+//}]
