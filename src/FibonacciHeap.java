@@ -207,7 +207,7 @@ public class FibonacciHeap
                     node = node.next;
                     changeNode.prev.next = changeNode.next;
                     changeNode.next.prev = changeNode.prev;
-                    concatenateRoots(changeNode, basket[node.rank]);
+                    concatenateRoots(changeNode, basket[changeNode.rank]);
                 }
                 else {
                     if (basket[node.rank] == this.leftRoot) {
