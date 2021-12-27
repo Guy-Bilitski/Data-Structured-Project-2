@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.Random;
+
 /**
  * FibonacciHeap
  *
@@ -53,7 +56,7 @@ public class FibonacciHeap {
             }
         }
 
-        this.size++;
+        this.size += newNode.size;
         this.numOfTrees ++;
     }
 
@@ -79,7 +82,7 @@ public class FibonacciHeap {
      */
     public void deleteMin() {
         if (this.size == 1) {
-            this.min.prev = this.min.next = this.min.child = null; //TODO: if size is 1 how min can have child?
+            this.min.prev = this.min.next = this.min.child = null;
             this.min = null;
             this.leftRoot = null;
         } else {
@@ -107,6 +110,10 @@ public class FibonacciHeap {
         }
         this.size--;
         this.numOfTrees --;   // The number of trees is reduced by 1 (line 97: increased by the number of children)
+        if (this.size > 1) {
+            this.consolidate();
+        }
+
     }
 
 
@@ -198,6 +205,9 @@ public class FibonacciHeap {
             root1.next = root2.child;
             root1.prev = root2.child.prev;
             root2.child.prev = root1;
+            if (root2.child.next == root2.child) {
+                root2.child.next = root1;
+            }
             root2.child = root1;
             root1.parent = root2;
         }
@@ -218,14 +228,14 @@ public class FibonacciHeap {
 
     // @pre fibonacci heap (this) is not empty
     public void consolidate() {
-        int reqSize = (int) (Math.log(this.size) / Math.log(2)) + 1; // upper bound for biggest tree rank (real one using the golden ratio)
-        HeapNode moveNode = this.leftRoot.prev;
+        int reqSize = (int) (Math.log(this.size) / Math.log(2)) + 3; // upper bound for biggest tree rank (real one using the golden ratio)
+        HeapNode moveNode = this.leftRoot;
         HeapNode[] basket = new HeapNode[reqSize];
         HeapNode node, node1, node2, nextToConcatenate;
 
         do {
             node = moveNode;
-            moveNode = moveNode.prev;
+            moveNode = moveNode.next;
             if (basket[node.rank] == null) {
                 basket[node.rank] = node; //insert to basket
                 disconnectFromList(node); // disconnect from list
@@ -234,9 +244,6 @@ public class FibonacciHeap {
                 node2 = minOfNodes(node, basket[node.rank])[0]; // the minimal
                 node1 = minOfNodes(node, basket[node.rank])[1]; // the bigger (gets disconnected)
                 basket[node.rank] = null;
-                if (node1 == this.leftRoot) {
-                    this.leftRoot = this.leftRoot.next;
-                }
                 disconnectFromList(node);
                 concatenateRoots(node1, node2); //node1 is taken as the child of node2
                 while (basket[node2.rank] != null) {
@@ -249,13 +256,17 @@ public class FibonacciHeap {
                 basket[node2.rank] = node2;
             }
         }
-//        while (moveNode != this.leftRoot.prev);
         while (!this.isEmpty());
-        for (HeapNode heapNode : basket) {
-            if (heapNode != null) {
-                this.addHeapNode(heapNode);
+        for (int i=basket.length - 1; i >= 0; i--) {
+            if (basket[i] != null) {
+                this.addHeapNode(basket[i]);
             }
         }
+//        for (HeapNode heapNode : basket) {
+//            if (heapNode != null) {
+//                this.addHeapNode(heapNode);
+//            }
+//        }
     }
 
     /**
@@ -530,44 +541,40 @@ public class FibonacciHeap {
     public static void main(String[] args) {
         FibonacciHeap h = new FibonacciHeap();
         FibonacciHeap h2 = new FibonacciHeap();
+        ArrayList<HeapNode> l = new ArrayList<>();
+//        int k;
+//        Random rand = new Random();
+//        for (int i=0; i < 50; i++) {
+//            k = rand.nextInt(100000);
+//            l.add(h.insert(k));
+//        }
+//
+//        for (HeapNode node : l) {
+//            h.deleteMin();
+//        }
+
         h.insert(5);
-        h.insert(10);
-        h.insert(4);
-        h.insert(2);
-        h.insert(-7);
-        h.insert(1524);
-        h.consolidate();
-        System.out.println("hello");
-        h2.insert(15);
-        h2.insert(-17);
-        h2.insert(-22);
-////        System.out.println("num of tree in h1 before meld: " + h.numOfTrees);
-//        h.meld(h2);
-//        System.out.println("num of tree in h1 after meld: " + h.numOfTrees);
-//        System.out.println("num of marks: " + h.numOfMarks); // should be 0
-//        h.delete(h.leftRoot.next.next);
-//        System.out.println("num of marks after delete: " + h.numOfMarks);
-//        h.decreaseKey(h.leftRoot.child, 10);
-//        System.out.println("min key is: " + h.min.key);
-//        System.out.println("leftroot key is " + h.leftRoot.key);
-//        System.out.println("num of tree: " + h.numOfTrees);
-//        System.out.println("num of marks: " + h.numOfMarks);
-//        System.out.println("potential is " +  h.potential());
-//        System.out.println("h size is: " + h.size());
-//        System.out.println(h.leftRoot.next.rank);
+        h.insert(15);
+        h.insert(3);
+        h.insert(51);
+        h.insert(12);
+        h.insert(13);
+        h.insert(61);
+        h.insert(1);
+        h.deleteMin();
+//        h.deleteMin();
+        System.out.println(h.min.key);
+        System.out.println(h.leftRoot.key);
+//        h.insert(5);
+//        h.insert(10);
+//        h.insert(4);
+//        h.insert(2);
+//        h.insert(-7);
+//        h.insert(1524);
+//        h.consolidate();
+//        System.out.println("hello");
+//        h2.insert(15);
+//        h2.insert(-17);
+//        h2.insert(-22);
     }
 }
-
-//        h.deleteMin();
-//        h.deleteMin();
-//        System.out.println(h.min.key);
-//        System.out.println(h.size);
-//        System.out.println(h.leftRoot.key);
-//        System.out.println(h.leftRoot.child);
-
-//        for (int val : h.countersRep()) {
-//            System.out.println(val);
-//        }
-//    }
-
-//}]
