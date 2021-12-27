@@ -174,10 +174,11 @@ public class FibonacciHeap {
         if (this.size == 1) {
             this.min = this.leftRoot = null;
         }
-        else {
-            node.prev.next = node.next;
-            node.next.prev = node.prev;
+        if (node == this.leftRoot) {
+            leftRoot = leftRoot.next;
         }
+        node.prev.next = node.next;
+        node.next.prev = node.prev;
         this.numOfTrees --;
         this.size --;
     }
@@ -253,6 +254,7 @@ public class FibonacciHeap {
                     node1 = minOfNodes(node2, nextToConcatenate)[1]; // the bigger (gets disconnected)
                     concatenateRoots(node1, node2);
                 }
+                node2.next = node2.prev = node2;
                 basket[node2.rank] = node2;
             }
         }
@@ -262,11 +264,6 @@ public class FibonacciHeap {
                 this.addHeapNode(basket[i]);
             }
         }
-//        for (HeapNode heapNode : basket) {
-//            if (heapNode != null) {
-//                this.addHeapNode(heapNode);
-//            }
-//        }
     }
 
     /**
