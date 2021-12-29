@@ -171,7 +171,7 @@ public class FibonacciHeap {
     // @pre node must be a root in current heap
     // @pre tree must have at least 2 nodes (including node)
     private void disconnectFromList(HeapNode node) {
-        if (this.size == 1) {
+        if (this.numOfTrees == 1) {
             this.min = this.leftRoot = null;
         }
         if (node == this.leftRoot) {
@@ -179,8 +179,11 @@ public class FibonacciHeap {
         }
         node.prev.next = node.next;
         node.next.prev = node.prev;
+        if (node == this.min) {
+            this.min = findNewMin();
+        }
         this.numOfTrees --;
-        this.size --;
+        this.size -= node.size;
     }
 
     // Gets two nodes and return the minimal one at index 0 , the maximal one at index 1
@@ -240,6 +243,7 @@ public class FibonacciHeap {
             if (basket[node.rank] == null) {
                 basket[node.rank] = node; //insert to basket
                 disconnectFromList(node); // disconnect from list
+                node.next = node.prev = node;
             }
             else {
                 node2 = minOfNodes(node, basket[node.rank])[0]; // the minimal
@@ -247,14 +251,16 @@ public class FibonacciHeap {
                 basket[node.rank] = null;
                 disconnectFromList(node);
                 concatenateRoots(node1, node2); //node1 is taken as the child of node2
+                node2.next = node2.prev = node2;
                 while (basket[node2.rank] != null) {
                     nextToConcatenate = basket[node2.rank];
                     basket[node2.rank] = null;
-                    node2 = minOfNodes(node2, nextToConcatenate)[0]; // the minimal
                     node1 = minOfNodes(node2, nextToConcatenate)[1]; // the bigger (gets disconnected)
+                    node2 = minOfNodes(node2, nextToConcatenate)[0]; // the minimal
+
                     concatenateRoots(node1, node2);
                 }
-                node2.next = node2.prev = node2;
+
                 basket[node2.rank] = node2;
             }
         }
@@ -559,8 +565,14 @@ public class FibonacciHeap {
         h.insert(61);
         h.insert(1);
         h.deleteMin();
-//        h.deleteMin();
-        System.out.println(h.min.key);
+        h.deleteMin();
+        h.deleteMin();
+        h.deleteMin();
+        h.deleteMin();
+        h.deleteMin();
+        h.deleteMin();
+        h.deleteMin();
+        System.out.println(h.min);
         System.out.println(h.leftRoot.key);
 //        h.insert(5);
 //        h.insert(10);
