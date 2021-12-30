@@ -279,37 +279,37 @@ public class FibonacciHeap {
      */
     public void meld(FibonacciHeap heap2) {
         concatenateHeaps(heap2);
-        HeapNode node = this.leftRoot.prev;
-        int reqSize = (int) Math.log(this.size) * 2; // upper bound for biggest tree rank (real one using the golden ratio)
-
-        HeapNode[] basket = new HeapNode[reqSize];
-
-        do {
-            if (basket[node.rank] == null) {
-                basket[node.rank] = node;
-                node = node.prev;
-            } else {
-                int rankToDelete = node.rank;
-                if (node.key > basket[node.rank].key) {
-                    if (node == this.leftRoot) {
-                        this.leftRoot = this.leftRoot.next;
-                    }
-                    HeapNode changeNode = node;
-                    node = node.prev;
-                    concatenateRootsFromList(changeNode, basket[changeNode.rank]);
-
-                }
-                else {
-                    if (basket[node.rank] == this.leftRoot) {
-                        this.leftRoot = this.leftRoot.next;
-                    }
-                    concatenateRootsFromList(basket[node.rank], node);
-                    node = node.prev;
-                }
-                basket[rankToDelete] = null;
-            }
-        }
-        while (node != this.leftRoot.prev);
+//        HeapNode node = this.leftRoot.prev;
+//        int reqSize = (int) Math.log(this.size) * 2; // upper bound for biggest tree rank (real one using the golden ratio)
+//
+//        HeapNode[] basket = new HeapNode[reqSize];
+//
+//        do {
+//            if (basket[node.rank] == null) {
+//                basket[node.rank] = node;
+//                node = node.prev;
+//            } else {
+//                int rankToDelete = node.rank;
+//                if (node.key > basket[node.rank].key) {
+//                    if (node == this.leftRoot) {
+//                        this.leftRoot = this.leftRoot.next;
+//                    }
+//                    HeapNode changeNode = node;
+//                    node = node.prev;
+//                    concatenateRootsFromList(changeNode, basket[changeNode.rank]);
+//
+//                }
+//                else {
+//                    if (basket[node.rank] == this.leftRoot) {
+//                        this.leftRoot = this.leftRoot.next;
+//                    }
+//                    concatenateRootsFromList(basket[node.rank], node);
+//                    node = node.prev;
+//                }
+//                basket[rankToDelete] = null;
+//            }
+//        }
+//        while (node != this.leftRoot.prev);
     }
 
     /**
