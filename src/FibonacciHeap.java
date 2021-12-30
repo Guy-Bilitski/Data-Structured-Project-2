@@ -456,35 +456,6 @@ public class FibonacciHeap {
      * <p>
      * ###CRITICAL### : you are NOT allowed to change H.
      */
-//    public static int[] kMin(FibonacciHeap H, int k) {
-//        int[] arr = new int[k];
-//        int index = 0;
-//        FibonacciHeap minFibHeap = new FibonacciHeap();
-//        HeapNode pointer = H.min; // should be the root.
-//        if (H.isEmpty() || k == 0) {
-//            return arr;
-//        }
-//        else{
-//            arr[index++] = H.min.key;
-//            k--;
-//        }
-//        while (k > 0){
-//            if (pointer.child != null){
-//                pointer = pointer.child;
-//                HeapNode stable = pointer;
-//                do{
-//                    minFibHeap.insert(pointer.key);
-//                    pointer = pointer.next;
-//                }
-//                while (pointer != stable);
-//            }
-//            arr[index++] = minFibHeap.min.key;
-//            minFibHeap.deleteMin();
-//            k --;
-//        }
-//        return arr;
-//    }
-
     public static int[] kMin(FibonacciHeap H, int k) {
         int[] arr = new int[k];
         int index = 0;
@@ -497,8 +468,21 @@ public class FibonacciHeap {
             arr[index++] = H.min.key;
             k--;
         }
-        while (k > 0) {
-
+        while (k > 0){
+            if (pointer.child != null){
+                pointer = pointer.child;
+                HeapNode stable = pointer;
+                do{
+                    minFibHeap.insert(pointer.key);
+                    minFibHeap.leftRoot.pointer = pointer;
+                    pointer = pointer.next;
+                }
+                while (pointer != stable);
+            }
+            pointer = minFibHeap.min.pointer;
+            arr[index++] = pointer.key;
+            minFibHeap.deleteMin();
+            k --;
         }
         return arr;
     }
@@ -567,7 +551,7 @@ public class FibonacciHeap {
         public HeapNode prev;
         public HeapNode next;
         public HeapNode parent;
-        public HeapNode pointer; // for kMin only
+        public HeapNode pointer;   // for kMin only
 
         public HeapNode(int key) {
             this.key = key;
@@ -579,11 +563,6 @@ public class FibonacciHeap {
             this.next = this;
             this.parent = null;
         }
-        public HeapNode(int key, HeapNode pointer){
-            this(key);
-            this.pointer = pointer;
-        }
-
         public int getKey() {
             return this.key;
         }
@@ -656,7 +635,7 @@ public class FibonacciHeap {
 //        h.deleteMin();
 //        h.deleteMin();
 //        h.deleteMin();
-        int[] arr1 = kMin(h,7);
+        int[] arr1 = kMin(h,8);
         System.out.println(Arrays.toString(arr1));
         System.out.println("h.min key: " + h.min.key);
         System.out.println("h.leftroot: " + h.leftRoot.key);
