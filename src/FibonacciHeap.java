@@ -79,18 +79,16 @@ public class FibonacciHeap {
 
             if (this.min.child != null) {  // remove the min node and update the pointers (prev, next, child)
                 HeapNode childNode = this.min.child;
+                setParentsAsNull(childNode);
                 childNode.prev.next = this.min.next; // update the right child node, then update the left child node
                 this.min.next.prev = childNode.prev;
                 childNode.prev = this.min.prev;
-                childNode.parent = null;
-//                setParentsAsNull(childNode);
                 this.min.prev.next = childNode;
                 this.numOfTrees += this.min.rank; //The number of trees increases by the number of children of min.
             } else {
                 this.min.prev.next = this.min.next;   // if dont have a child - just remove the min node.
                 this.min.next.prev = this.min.prev;
             }
-//            this.min = findNewMin();
         }
         this.size--;
         this.numOfTrees --;   // The number of trees is reduced by 1 (line 97: increased by the number of children)
@@ -102,7 +100,6 @@ public class FibonacciHeap {
         }
 
     }
-
 
     /**
      * public HeapNode findMin()
@@ -117,70 +114,6 @@ public class FibonacciHeap {
             return this.min;
         }
     }
-
-    // puts all heap roots on the right side of current heap
-//    private void concatenateHeaps(FibonacciHeap heap2) {
-//        if (this.min.key > heap2.min.key) {
-//            this.min = heap2.min;
-//        }
-//
-//        HeapNode rightNodeHeap1 = this.leftRoot.prev;
-//        HeapNode leftNodeHeap1 = this.leftRoot;
-//        HeapNode rightNodeHeap2 = heap2.leftRoot.prev;
-//        HeapNode leftNodeHeap2 = heap2.leftRoot;
-//
-//        rightNodeHeap1.next = leftNodeHeap2;
-//        leftNodeHeap2.prev = rightNodeHeap1;
-//
-//        leftNodeHeap1.prev = rightNodeHeap2;
-//        rightNodeHeap2.next = leftNodeHeap1;
-//
-//        this.size += heap2.size;
-//        this.numOfTrees += heap2.numOfTrees;
-//    }
-
-
-
-//    // @pre key of root2 is the smaller one
-//    // @pre rank of both roots is equal
-//    private void concatenateRoots(HeapNode root1, HeapNode root2) {
-//
-//        if (root2.child == null) {
-//            root2.child = root1;
-//            root1.parent = root2;
-//            root1.next = root1;
-//            root1.prev = root1;
-//        } else {
-//            root1.next = root2.child;
-//            root1.prev = root2.child.prev;
-//            root2.child.prev = root1;
-//            if (root2.child.next == root2.child) {
-//                root2.child.next = root1;
-//            }
-////            else{
-////                root2.child.prev.next = root1;
-////            }
-//
-//            root2.child = root1;
-//            root1.parent = root2;
-//        }
-//
-//        root2.rank++;
-//        root2.size += root1.size;
-//    }
-
-
-
-//    // concatenate roots that are part of a list
-//    // @pre node2 is the smaller one
-//    public void concatenateRootsFromList(HeapNode node1, HeapNode node2) {
-//        node1.next.prev = node1.prev;
-//        node1.prev.next = node1.next;
-//        concatenateRoots(node1, node2);
-//        numOfLinks ++;
-//        this.numOfTrees --;
-//    }
-
 
     /**
      * Performs consolidation to the Fibonacci heap.
@@ -253,38 +186,6 @@ public class FibonacciHeap {
 
         this.size += heap2.size;
         this.numOfTrees += heap2.numOfTrees;
-//        concatenateHeaps(heap2);
-//        HeapNode node = this.leftRoot.prev;
-//        int reqSize = (int) Math.log(this.size) * 2; // upper bound for biggest tree rank (real one using the golden ratio)
-//
-//        HeapNode[] basket = new HeapNode[reqSize];
-//
-//        do {
-//            if (basket[node.rank] == null) {
-//                basket[node.rank] = node;
-//                node = node.prev;
-//            } else {
-//                int rankToDelete = node.rank;
-//                if (node.key > basket[node.rank].key) {
-//                    if (node == this.leftRoot) {
-//                        this.leftRoot = this.leftRoot.next;
-//                    }
-//                    HeapNode changeNode = node;
-//                    node = node.prev;
-//                    concatenateRootsFromList(changeNode, basket[changeNode.rank]);
-//
-//                }
-//                else {
-//                    if (basket[node.rank] == this.leftRoot) {
-//                        this.leftRoot = this.leftRoot.next;
-//                    }
-//                    concatenateRootsFromList(basket[node.rank], node);
-//                    node = node.prev;
-//                }
-//                basket[rankToDelete] = null;
-//            }
-//        }
-//        while (node != this.leftRoot.prev);
     }
 
     /**
@@ -300,8 +201,7 @@ public class FibonacciHeap {
     /**
      * public int[] countersRep()
      * <p>
-     * W.C Complexity: O(n) TODO: validate that
-     * Amortized Complexity: O(logn) TODO: validate that
+     * Complexity: O(n) TODO: validate that
      * Return an array of counters. The i-th entry contains the number of trees of order i in the heap.
      * Note: The size of of the array depends on the maximum order of a tree, and an empty heap returns an empty array.
      */
@@ -488,25 +388,6 @@ public class FibonacciHeap {
         this.numOfTrees ++;
     }
 
-//    /**
-//     * walks through heap nodes and finds the minimum.
-//     * W.C Complexity: O(n)
-//     * Amortized Complexity: O(logn)
-//     * Returns true if and only if the heap is empty.
-//     */
-//    private HeapNode findNewMin() {
-//        HeapNode newMin = this.leftRoot;
-//        HeapNode curr = this.leftRoot;
-//
-//        do {
-//            if (curr.key < newMin.key) {
-//                newMin = curr;    // update the min.
-//            }
-//            curr = curr.next;
-//        }
-//        while (curr != this.leftRoot);
-//        return newMin;
-//    }
 
     /**
      * Gets two HeapNodes and concatenates them to each other
@@ -608,14 +489,7 @@ public class FibonacciHeap {
             y.child = x.next;       // the second left node becomes the child.
         }
 
-        // place x to the left of the heap:
         this.addHeapNode(x);
-//        x.prev = this.leftRoot.prev;
-//        x.next = this.leftRoot;
-//        this.leftRoot.prev.next = x;
-//        this.leftRoot.prev = x;
-//        this.leftRoot = x;          // update x to be leftRoot
-
         numOfCuts ++;
     }
     /**
