@@ -250,18 +250,20 @@ public class FibonacciHeap {
         }
 
         root2.rank++;
+        numOfLinks ++;
         root2.size += root1.size;
+
     }
 
-    // concatenate roots that are part of a list
-    // @pre node2 is the smaller one
-    public void concatenateRootsFromList(HeapNode node1, HeapNode node2) {
-        node1.next.prev = node1.prev;
-        node1.prev.next = node1.next;
-        concatenateRoots(node1, node2);
-        numOfLinks ++;
-        this.numOfTrees --;
-    }
+//    // concatenate roots that are part of a list
+//    // @pre node2 is the smaller one
+//    public void concatenateRootsFromList(HeapNode node1, HeapNode node2) {
+//        node1.next.prev = node1.prev;
+//        node1.prev.next = node1.next;
+//        concatenateRoots(node1, node2);
+//        numOfLinks ++;
+//        this.numOfTrees --;
+//    }
 
     // @pre fibonacci heap (this) is not empty
     public void consolidate() {
@@ -311,7 +313,24 @@ public class FibonacciHeap {
      * Melds heap2 with the current heap.
      */
     public void meld(FibonacciHeap heap2) {
-        concatenateHeaps(heap2);
+        if (this.min.key > heap2.min.key) {
+            this.min = heap2.min;
+        }
+
+        HeapNode rightNodeHeap1 = this.leftRoot.prev;
+        HeapNode leftNodeHeap1 = this.leftRoot;
+        HeapNode rightNodeHeap2 = heap2.leftRoot.prev;
+        HeapNode leftNodeHeap2 = heap2.leftRoot;
+
+        rightNodeHeap1.next = leftNodeHeap2;
+        leftNodeHeap2.prev = rightNodeHeap1;
+
+        leftNodeHeap1.prev = rightNodeHeap2;
+        rightNodeHeap2.next = leftNodeHeap1;
+
+        this.size += heap2.size;
+        this.numOfTrees += heap2.numOfTrees;
+//        concatenateHeaps(heap2);
 //        HeapNode node = this.leftRoot.prev;
 //        int reqSize = (int) Math.log(this.size) * 2; // upper bound for biggest tree rank (real one using the golden ratio)
 //
