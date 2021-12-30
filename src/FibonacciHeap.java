@@ -346,9 +346,6 @@ public class FibonacciHeap {
         }
         node.prev.next = node.next;
         node.next.prev = node.prev;
-//        if (node == this.min) {
-//            this.min = findNewMin();
-//        }
         this.numOfTrees --;
         this.size -= node.size;
     }
