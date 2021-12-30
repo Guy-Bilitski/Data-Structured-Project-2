@@ -17,15 +17,12 @@ public class FibonacciHeap {
     private static int numOfLinks = 0;
     private static int numOfCuts = 0;  // Use it by static function.
 
-
-
     public FibonacciHeap(HeapNode node) {
         this.min = node;
         this.size = node.size;
         this.leftRoot = node;
         this.numOfMarks = 0;
         this.numOfTrees = 0;
-
     }
 
     public FibonacciHeap() {
@@ -86,18 +83,22 @@ public class FibonacciHeap {
                 this.min.next.prev = childNode.prev;
                 childNode.prev = this.min.prev;
                 childNode.parent = null;
+//                setParentsAsNull(childNode);
                 this.min.prev.next = childNode;
                 this.numOfTrees += this.min.rank; //The number of trees increases by the number of children of min.
             } else {
                 this.min.prev.next = this.min.next;   // if dont have a child - just remove the min node.
                 this.min.next.prev = this.min.prev;
             }
-            this.min = findNewMin();
+//            this.min = findNewMin();
         }
         this.size--;
         this.numOfTrees --;   // The number of trees is reduced by 1 (line 97: increased by the number of children)
         if (this.size > 1) {
             this.consolidate();
+        }
+        else {
+            this.min = this.leftRoot;
         }
 
     }
@@ -321,7 +322,8 @@ public class FibonacciHeap {
 
     /**
      * public void delete(HeapNode x)
-     * Complexity: O(logn) TODO: validate that (amortized?)
+     * W.C Complexity: O(logn)
+     * Amortized Complexity: O(1)
      * <p>
      * Deletes the node x from the heap.
      * It is assumed that x indeed belongs to the heap.
@@ -335,7 +337,8 @@ public class FibonacciHeap {
 
     /**
      * public void decreaseKey(HeapNode x, int delta)
-     * Complexity: O(1) TODO: validate that (amortized?)
+     * W.C Complexity: O(logn)
+     * Amortized Complexity: O(1)
      * <p>
      * Decreases the key of the node x by a non-negative value delta. The structure of the heap should be updated
      * to reflect this change (for example, the cascading cuts procedure should be applied if needed).
@@ -344,23 +347,6 @@ public class FibonacciHeap {
         actualDecreaseKey(x, delta, false);  //There is no intention to delete the node at the end of the decrease
     }
 
-    /**
-     * used both for Delete(x) and for decreaseKey(x, delta)
-     * toBeDeleted represents whether the intention is to delete the node
-     * at the end of the process or not.
-     * Complexity: TODO: ???
-     */
-    public void actualDecreaseKey(HeapNode x, int delta, boolean toBeDeleted){
-        x.key -= delta;
-        if ((x.key < this.min.key) && !toBeDeleted){
-            this.min = x;
-        }
-        if (x.parent != null){  // if x is not a root:
-            if (x.key < x.parent.key){
-                cascadingCut(x, x.parent);
-            }
-        }
-    }
 
     /**
      * public int potential()
@@ -403,7 +389,7 @@ public class FibonacciHeap {
 
     /**
      * public static int[] kMin(FibonacciHeap H, int k)
-     * Complexity: O(logn) TODO: validate that
+     * Complexity: O(K*deg(H))
      * <p>
      * This static function returns the k smallest elements in a Fibonacci heap that contains a single tree.
      * The function should run in O(k*deg(H)). (deg(H) is the degree of the only tree in H.)
@@ -460,9 +446,9 @@ public class FibonacciHeap {
         }
         node.prev.next = node.next;
         node.next.prev = node.prev;
-        if (node == this.min) {
-            this.min = findNewMin();
-        }
+//        if (node == this.min) {
+//            this.min = findNewMin();
+//        }
         this.numOfTrees --;
         this.size -= node.size;
     }
@@ -482,7 +468,7 @@ public class FibonacciHeap {
 
     /**
      * Gets a node and adds it to the most left place of roots inside the heap
-     * Complexity: O(1). adds a node to the first index in kind of linked list.
+     * Complexity: O(1)
      */
     private void addHeapNode(HeapNode newNode) {
         if (this.min == null) {
@@ -502,29 +488,25 @@ public class FibonacciHeap {
         this.numOfTrees ++;
     }
 
-
-    /**
-     * walks through heap nodes and finds the minimum.
-     * W.C Complexity: O(n)
-     * Amortized Complexity: O(n)
-     * Returns true if and only if the heap is empty.
-     */
-    private HeapNode findNewMin() {
-        HeapNode newMin = this.leftRoot;
-        HeapNode curr = this.leftRoot;
-
-        do {
-            if (curr.key < newMin.key) {
-                newMin = curr;    // update the min.
-            }
-            curr = curr.next;
-        }
-        while (curr != this.leftRoot);
-
-
-        return newMin;
-    }
-
+//    /**
+//     * walks through heap nodes and finds the minimum.
+//     * W.C Complexity: O(n)
+//     * Amortized Complexity: O(logn)
+//     * Returns true if and only if the heap is empty.
+//     */
+//    private HeapNode findNewMin() {
+//        HeapNode newMin = this.leftRoot;
+//        HeapNode curr = this.leftRoot;
+//
+//        do {
+//            if (curr.key < newMin.key) {
+//                newMin = curr;    // update the min.
+//            }
+//            curr = curr.next;
+//        }
+//        while (curr != this.leftRoot);
+//        return newMin;
+//    }
 
     /**
      * Gets two HeapNodes and concatenates them to each other
@@ -561,11 +543,30 @@ public class FibonacciHeap {
 
     }
 
+    /**
+     * used both for Delete(x) and for decreaseKey(x, delta)
+     * toBeDeleted represents whether the intention is to delete the node
+     * at the end of the process or not.
+     * W.C Complexity: O(logn)
+     * Amortized Complexity: O(1)
+     */
+    private void actualDecreaseKey(HeapNode x, int delta, boolean toBeDeleted){
+        x.key -= delta;
+        if ((x.key < this.min.key) && !toBeDeleted){
+            this.min = x;
+        }
+        if (x.parent != null){  // if x is not a root:
+            if (x.key < x.parent.key){
+                cascadingCut(x, x.parent);
+            }
+        }
+    }
 
     /**
      * Gets two HeapNodes, x as son and y parent. cuts x from y and move on to perform the cascading cuts based
      * on marks.
-     * Complexity: O(logn) TODO: make sure it is true.
+     * W.C Complexity: O(logn)
+     * Amortized Complexity: O(1)
      */
     private void cascadingCut(HeapNode x, HeapNode y){
         cut(x, y);                     // cut x from y.
@@ -579,7 +580,6 @@ public class FibonacciHeap {
             }
         }
     }
-
 
     /**
      * cuts HeapNode x from y
@@ -597,24 +597,39 @@ public class FibonacciHeap {
         // update y's pointers and fields:
         y.rank --;
         y.size -= x.size;
-        if (x.next == x){         // if x was the only child of y --> then y has no children right now.
+//        if (y.child == x) {   // if x is the direct child of y:
+        if (x.next == x) {         // if x was the only child of y --> then y has no children right now.
             y.child = null;
-        }
-        else{                        // updates the connections between y's children
-            y.child = x.next;       // the second left node becomes the child.
+        } else {                        // updates the connections between y's children
             x.prev.next = x.next;  // come full circle (after cut off x)
             x.next.prev = x.prev;
         }
+        if (y.child == x) {          // if x is the direct child of y:
+            y.child = x.next;       // the second left node becomes the child.
+        }
 
         // place x to the left of the heap:
-        x.prev = this.leftRoot.prev;
-        x.next = this.leftRoot;
-        this.leftRoot.prev = x;
-        this.leftRoot = x;          // update x to be leftRoot
+        this.addHeapNode(x);
+//        x.prev = this.leftRoot.prev;
+//        x.next = this.leftRoot;
+//        this.leftRoot.prev.next = x;
+//        this.leftRoot.prev = x;
+//        this.leftRoot = x;          // update x to be leftRoot
 
         numOfCuts ++;
     }
-
+    /**
+     * sets h and its brothers parent as null
+     * Complexity: O(k) when k is the number of brothers (thus if k is deg of parent inside heap, the complexity is O(logn)
+     */
+    private void setParentsAsNull(HeapNode h) {
+        HeapNode stable = h;
+        do {
+            h.parent = null;
+            h = h.next;
+        }
+        while (stable != h);
+    }
 
     /**
      * public class HeapNode
@@ -683,15 +698,17 @@ public class FibonacciHeap {
         h.insert(7);
         h.deleteMin();
         h.deleteMin();
+        h.deleteMin();
 
+        h.deleteMin();
+        h.deleteMin();
+        h.deleteMin();
+        h.deleteMin();
+        h.deleteMin();
+        h.deleteMin();
 //        h.deleteMin();
 //        h.deleteMin();
-//        h.deleteMin();
-//        h.deleteMin();
-//        h.deleteMin();
-//        h.deleteMin();
-//        h.deleteMin();
-//        h.deleteMin();
+        System.out.println(h.min.key);
         int[] arr1 = kMin(h,8);
         System.out.println(Arrays.toString(arr1));
         System.out.println("h.min key: " + h.min.key);
