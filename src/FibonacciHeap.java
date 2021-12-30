@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 /**
@@ -196,6 +197,34 @@ public class FibonacciHeap {
         }
     }
 
+//    // @pre key of root2 is the smaller one
+//    // @pre rank of both roots is equal
+//    private void concatenateRoots(HeapNode root1, HeapNode root2) {
+//
+//        if (root2.child == null) {
+//            root2.child = root1;
+//            root1.parent = root2;
+//            root1.next = root1;
+//            root1.prev = root1;
+//        } else {
+//            root1.next = root2.child;
+//            root1.prev = root2.child.prev;
+//            root2.child.prev = root1;
+//            if (root2.child.next == root2.child) {
+//                root2.child.next = root1;
+//            }
+////            else{
+////                root2.child.prev.next = root1;
+////            }
+//
+//            root2.child = root1;
+//            root1.parent = root2;
+//        }
+//
+//        root2.rank++;
+//        root2.size += root1.size;
+//    }
+
     // @pre key of root2 is the smaller one
     // @pre rank of both roots is equal
     private void concatenateRoots(HeapNode root1, HeapNode root2) {
@@ -207,11 +236,15 @@ public class FibonacciHeap {
             root1.prev = root1;
         } else {
             root1.next = root2.child;
-            root1.prev = root2.child.prev;
-            root2.child.prev = root1;
-            if (root2.child.next == root2.child) {
+            if (root2.child.prev == root2.child){
                 root2.child.next = root1;
             }
+            else{
+                root2.child.prev.next = root1;
+            }
+            root1.prev = root2.child.prev;
+            root2.child.prev = root1;
+
             root2.child = root1;
             root1.parent = root2;
         }
@@ -423,9 +456,51 @@ public class FibonacciHeap {
      * <p>
      * ###CRITICAL### : you are NOT allowed to change H.
      */
+//    public static int[] kMin(FibonacciHeap H, int k) {
+//        int[] arr = new int[k];
+//        int index = 0;
+//        FibonacciHeap minFibHeap = new FibonacciHeap();
+//        HeapNode pointer = H.min; // should be the root.
+//        if (H.isEmpty() || k == 0) {
+//            return arr;
+//        }
+//        else{
+//            arr[index++] = H.min.key;
+//            k--;
+//        }
+//        while (k > 0){
+//            if (pointer.child != null){
+//                pointer = pointer.child;
+//                HeapNode stable = pointer;
+//                do{
+//                    minFibHeap.insert(pointer.key);
+//                    pointer = pointer.next;
+//                }
+//                while (pointer != stable);
+//            }
+//            arr[index++] = minFibHeap.min.key;
+//            minFibHeap.deleteMin();
+//            k --;
+//        }
+//        return arr;
+//    }
+
     public static int[] kMin(FibonacciHeap H, int k) {
-        int[] arr = new int[100];
-        return arr; // should be replaced by student code
+        int[] arr = new int[k];
+        int index = 0;
+        FibonacciHeap minFibHeap = new FibonacciHeap();
+        HeapNode pointer = H.min; // should be the root.
+        if (H.isEmpty() || k == 0) {
+            return arr;
+        }
+        else{
+            arr[index++] = H.min.key;
+            k--;
+        }
+        while (k > 0) {
+
+        }
+        return arr;
     }
     /* _________________________*/
     /* _________________________*/
@@ -492,6 +567,7 @@ public class FibonacciHeap {
         public HeapNode prev;
         public HeapNode next;
         public HeapNode parent;
+        public HeapNode pointer; // for kMin only
 
         public HeapNode(int key) {
             this.key = key;
@@ -502,6 +578,10 @@ public class FibonacciHeap {
             this.prev = this;
             this.next = this;
             this.parent = null;
+        }
+        public HeapNode(int key, HeapNode pointer){
+            this(key);
+            this.pointer = pointer;
         }
 
         public int getKey() {
@@ -543,8 +623,8 @@ public class FibonacciHeap {
 
     public static void main(String[] args) {
         FibonacciHeap h = new FibonacciHeap();
-        FibonacciHeap h2 = new FibonacciHeap();
-        ArrayList<HeapNode> l = new ArrayList<>();
+//        FibonacciHeap h2 = new FibonacciHeap();
+//        ArrayList<HeapNode> l = new ArrayList<>();
 //        int k;
 //        Random rand = new Random();
 //        for (int i=0; i < 50; i++) {
@@ -555,7 +635,6 @@ public class FibonacciHeap {
 //        for (HeapNode node : l) {
 //            h.deleteMin();
 //        }
-
         h.insert(5);
         h.insert(15);
         h.insert(3);
@@ -564,16 +643,25 @@ public class FibonacciHeap {
         h.insert(13);
         h.insert(61);
         h.insert(1);
+        h.insert(20);
+        h.insert(7);
         h.deleteMin();
         h.deleteMin();
-        h.deleteMin();
-        h.deleteMin();
-        h.deleteMin();
-        h.deleteMin();
-        h.deleteMin();
-        h.deleteMin();
-        System.out.println(h.min);
-        System.out.println(h.leftRoot.key);
+
+//        h.deleteMin();
+//        h.deleteMin();
+//        h.deleteMin();
+//        h.deleteMin();
+//        h.deleteMin();
+//        h.deleteMin();
+//        h.deleteMin();
+//        h.deleteMin();
+        int[] arr1 = kMin(h,7);
+        System.out.println(Arrays.toString(arr1));
+        System.out.println("h.min key: " + h.min.key);
+        System.out.println("h.leftroot: " + h.leftRoot.key);
+
+
 //        h.insert(5);
 //        h.insert(10);
 //        h.insert(4);
@@ -585,5 +673,6 @@ public class FibonacciHeap {
 //        h2.insert(15);
 //        h2.insert(-17);
 //        h2.insert(-22);
+
     }
 }
