@@ -486,9 +486,15 @@ public class FibonacciHeap {
             y.child = x.next;       // the second left node becomes the child.
         }
 
-        this.addHeapNode(x);
+        // place x to the left of the heap:
+        x.prev = this.leftRoot.prev;
+        x.next = this.leftRoot;
+        this.leftRoot.prev.next = x;
+        this.leftRoot.prev = x;
+        this.leftRoot = x;          // update x to be leftRoot
         numOfCuts ++;
     }
+
     /**
      * sets h and its brothers parent as null
      * Complexity: O(k) when k is the number of brothers (thus if k is deg of parent inside heap, the complexity is O(logn)
@@ -570,20 +576,25 @@ public class FibonacciHeap {
         h.deleteMin();
         h.deleteMin();
         h.deleteMin();
+        HeapNode node1 = h.insert(1);
+        HeapNode node2 = h.insert(100);
 
         h.deleteMin();
         h.deleteMin();
+        h.delete(node1);
+        h.delete(node2);
         h.deleteMin();
         h.deleteMin();
-        h.deleteMin();
-        h.deleteMin();
+//        h.deleteMin();
+//        h.deleteMin();
 //        h.deleteMin();
 //        h.deleteMin();
         System.out.println(h.min.key);
-        int[] arr1 = kMin(h,8);
+
+        int[] arr1 = kMin(h,3);
         System.out.println(Arrays.toString(arr1));
-        System.out.println("h.min key: " + h.min.key);
-        System.out.println("h.leftroot: " + h.leftRoot.key);
+//        System.out.println("h.min key: " + h.min.key);
+//        System.out.println("h.leftroot: " + h.leftRoot.key);
 
 
 //        h.insert(5);
