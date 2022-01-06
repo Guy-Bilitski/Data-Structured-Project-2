@@ -1,7 +1,3 @@
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Random;
-
 /**
  * FibonacciHeap
  *
@@ -546,68 +542,6 @@ public class FibonacciHeap {
         public HeapNode getNext() {
             return this.next;
         }
-
-    }
-
-    public static void main(String[] args) {
-        FibonacciHeap h = new FibonacciHeap();
-//        FibonacciHeap h2 = new FibonacciHeap();
-//        ArrayList<HeapNode> l = new ArrayList<>();
-//        int k;
-//        Random rand = new Random();
-//        for (int i=0; i < 50; i++) {
-//            k = rand.nextInt(100000);
-//            l.add(h.insert(k));
-//        }
-//
-//        for (HeapNode node : l) {
-//            h.deleteMin();
-//        }
-        h.insert(5);
-        h.insert(15);
-        h.insert(3);
-        h.insert(51);
-        h.insert(12);
-        h.insert(13);
-        h.insert(61);
-        h.insert(1);
-        h.insert(20);
-        h.insert(7);
-        h.deleteMin();
-        h.deleteMin();
-        h.deleteMin();
-        HeapNode node1 = h.insert(1);
-        HeapNode node2 = h.insert(100);
-
-        h.deleteMin();
-        h.deleteMin();
-        h.delete(node1);
-        h.delete(node2);
-        h.deleteMin();
-        h.deleteMin();
-//        h.deleteMin();
-//        h.deleteMin();
-//        h.deleteMin();
-//        h.deleteMin();
-        System.out.println(h.min.key);
-
-        int[] arr1 = kMin(h,3);
-        System.out.println(Arrays.toString(arr1));
-//        System.out.println("h.min key: " + h.min.key);
-//        System.out.println("h.leftroot: " + h.leftRoot.key);
-
-
-//        h.insert(5);
-//        h.insert(10);
-//        h.insert(4);
-//        h.insert(2);
-//        h.insert(-7);
-//        h.insert(1524);
-//        h.consolidate();
-//        System.out.println("hello");
-//        h2.insert(15);
-//        h2.insert(-17);
-//        h2.insert(-22);
 
     }
 }
